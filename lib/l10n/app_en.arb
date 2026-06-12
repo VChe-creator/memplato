@@ -1,0 +1,106 @@
+{
+  "@@locale": "en",
+  "appTitle": "MemPlato",
+  "mobileServer": "Mobile Server",
+  "checkingSystem": "Checking...",
+  "step1of3": "STEP 1 OF 3",
+  "step2of3": "STEP 2 OF 3",
+  "step1title": "Install Termux",
+  "step1desc": "Termux is required to run the server. Download and install it.",
+  "btnDownloadTermux": "Download Termux",
+  "btnCheckAgain": "Check again",
+  "step2title": "Permission for MemPlato",
+  "step2desc": "Allow MemPlato to control Termux.",
+  "btnGivePermission": "Give permission",
+  "btnConfigureTermux": "Configure Termux",
+  "btnRestartTermux": "Restart Termux",
+  "btnLaunchTermux": "Open Termux",
+  "btnInstallServer": "Install server",
+  "btnCheckStatus": "Check",
+  "btnCopyUrl": "Copy URL",
+  "statusOnline": "MemPlato Online",
+  "statusOffline": "Unavailable",
+  "installLogLabel": "URL",
+  "urlHint": "http://localhost:7333",
+  "autoCheckNote": "Auto-check every 15 sec",
+  "installing": "Installing...",
+  "urlCopied": "URL copied!",
+  "logStarting": "🚀 Starting installation...",
+  "logWaitingTermux": "🔄 Waiting for Termux to start...",
+  "logPreparingServer": "📋 Preparing server...",
+  "logCopyingLibs": "📦 Copying libraries from APK...",
+  "logCopyingDeps": "📦 Copying Python dependencies from APK...",
+  "logCopyingPython": "🐍 Copying Python 3.13.13...",
+  "logCopyingModel": "📥 Copying model from APK...\n   (87 MB — ~1 min)",
+  "logCopyingServer": "📋 Copying server from APK...",
+  "logPreparingScript": "⚙️ Preparing script...",
+  "logStep1pkg": "📦 Step 1/4: Installing Python...",
+  "logStep2wheels": "⚙️ Step 2/4: Installing libraries...\n   (no compilation — fast!)",
+  "logStep2pip": "⚙️ Step 2/4: Installing libraries...",
+  "logPipOk": "✅ Libraries installed!",
+  "logMcpOk": "✅ All libraries installed!\n📋 Step 3/4: Copying server...",
+  "logStep3copy": "📋 Step 3/4: Copying server...",
+  "logStep3model": "📥 Step 3/4: Copying model from APK...\n ",
+  "logStep4start": "🚀 Step 4/4: Starting server...",
+  "logStepTunnel": "🔑 Setting up tunnel...",
+  "logTunnelStarted": "✅ Tunnel started!",
+  "logErrorNoPython": "❌ Error: Python failed to install.\n\nCheck your internet and try again.",
+  "logErrorServerFailed": "❌ Server failed to start.\n\n.",
+  "logDoneWithUrl": "✅ Done!\n🌐 Your URL:\n{url}",
+  "@logDoneWithUrl": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "logDoneNoUrl": "✅ Installation complete!",
+  "termuxSetupTitle": "Termux Setup",
+  "termuxSetupDesc": "Open Termux and enter the command below. Then press Exit and return here.",
+  "termuxExitNote": "After entering the command — press Exit Termux.",
+  "btnCopyCommand": "Copy",
+  "btnOpenTermux": "Open Termux",
+  "commandCopied": "Command copied!",
+  "exitTermuxHint": "Exit Termux and return here",
+  "notifDialogTitle": "Notifications disabled",
+  "notifDialogDesc": "MemPlato won't be able to notify you when Termux finishes installing. Enable notifications in Android settings.",
+  "btnLater": "Later",
+  "btnEnableNotif": "Enable",
+  "permDialogTitle": "Termux Permission",
+  "permDialogDesc": "MemPlato needs permission:\n1. Open settings\n2. Run commands in Termux environment\n3. Enable it",
+  "btnCancel": "Cancel",
+  "btnOpenSettings": "Open settings",
+  "downloadTermuxTitle": "Download Termux",
+  "downloadWhyTitle": "Why Termux?",
+  "downloadWhyDesc": "Termux is a terminal for Android. MemPlato uses it to run the server directly on your phone.",
+  "downloadFileName": "termux-app.v.universal.apk",
+  "downloadSourceLabel": "Source",
+  "downloadWarningTitle": "Warning",
+  "downloadWarningDesc": "Termux is no longer updated on Google Play. Download only from GitHub — this is the official source from Termux developers.",
+  "downloadSecurityTitle": "Security",
+  "downloadSecurityDesc": "Termux is open source on GitHub. Verified by the community. No hidden features. 1. Download the file 2. Allow installation from unknown sources 3. Install Termux.",
+  "agreeLabel": "I agree to the ",
+  "termsLink": "terms of use",
+  "btnClose": "Close",
+  "btnDownload": "Download",
+  "termsTitle": "Terms of Use",
+  "termsText": "By using MemPlato you agree to the terms of use of the application.",
+  "agreeCheckbox": "I accept the terms of use",
+  "btnAccept": "Accept",
+  "logCopyingFile": "📦 Copying {name}...",
+  "@logCopyingFile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "logErrorGeneric": "❌ Error: {error}",
+  "@logErrorGeneric": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
+}

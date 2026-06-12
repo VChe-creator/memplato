@@ -1,0 +1,106 @@
+{
+  "@@locale": "uk",
+  "appTitle": "MemPlato",
+  "mobileServer": "Mobile Server",
+  "checkingSystem": "Перевірка...",
+  "step1of3": "КРОК 1 З 3",
+  "step2of3": "КРОК 2 З 3",
+  "step1title": "Встановіть Termux",
+  "step1desc": "Для роботи сервера потрібен Termux. Завантажте та встановіть його.",
+  "btnDownloadTermux": "Завантажити Termux",
+  "btnCheckAgain": "Перевірити знову",
+  "step2title": "Дозвіл для MemPlato",
+  "step2desc": "Надайте MemPlato дозвіл на керування Termux.",
+  "btnGivePermission": "Надати дозвіл",
+  "btnConfigureTermux": "Налаштувати Termux",
+  "btnRestartTermux": "Перезапустити Termux",
+  "btnLaunchTermux": "Відкрити Termux",
+  "btnInstallServer": "Встановити сервер",
+  "btnCheckStatus": "Перевірити",
+  "btnCopyUrl": "Копіювати URL",
+  "statusOnline": "MemPlato Online",
+  "statusOffline": "Недоступний",
+  "installLogLabel": "URL",
+  "urlHint": "http://localhost:7333",
+  "autoCheckNote": "Автоперевірка кожні 15 сек",
+  "installing": "Встановлення...",
+  "urlCopied": "URL скопійовано!",
+  "logStarting": "🚀 Починаємо встановлення...",
+  "logWaitingTermux": "🔄 Очікуємо запуску Termux...",
+  "logPreparingServer": "📋 Підготовка сервера...",
+  "logCopyingLibs": "📦 Копіювання бібліотек з APK...",
+  "logCopyingDeps": "📦 Копіювання Python залежностей з APK...",
+  "logCopyingPython": "🐍 Копіювання Python 3.13.13...",
+  "logCopyingModel": "📥 Копіювання моделі з APK...\n   (87 МБ — займе ~1 хв)",
+  "logCopyingServer": "📋 Копіювання сервера з APK...",
+  "logPreparingScript": "⚙️ Підготовка скрипта...",
+  "logStep1pkg": "📦 Крок 1/4: Встановлення Python...",
+  "logStep2wheels": "⚙️ Крок 2/4: Встановлення бібліотек...\n   (без компіляції — швидко!)",
+  "logStep2pip": "⚙️ Крок 2/4: Встановлення бібліотек...",
+  "logPipOk": "✅ Бібліотеки встановлено!",
+  "logMcpOk": "✅ Всі бібліотеки встановлено!\n📋 Крок 3/4: Копіювання сервера...",
+  "logStep3copy": "📋 Крок 3/4: Копіювання сервера...",
+  "logStep3model": "📥 Крок 3/4: Копіювання моделі з APK...\n ",
+  "logStep4start": "🚀 Крок 4/4: Запуск сервера...",
+  "logStepTunnel": "🔑 Налаштування тунелю...",
+  "logTunnelStarted": "✅ Тунель запущено!",
+  "logErrorNoPython": "❌ Помилка: Python не встановився.\n\nПеревір інтернет і спробуй ще раз.",
+  "logErrorServerFailed": "❌ Сервер не запустився.\n\n.",
+  "logDoneWithUrl": "✅ Готово!\n🌐 Твій URL:\n{url}",
+  "@logDoneWithUrl": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "logDoneNoUrl": "✅ Встановлення завершено!",
+  "termuxSetupTitle": "Налаштування Termux",
+  "termuxSetupDesc": "Відкрийте Termux та введіть команду нижче. Потім натисніть Exit та поверніться.",
+  "termuxExitNote": "Після введення команди — натисніть Exit Termux.",
+  "btnCopyCommand": "Копіювати",
+  "btnOpenTermux": "Відкрити Termux",
+  "commandCopied": "Команду скопійовано!",
+  "exitTermuxHint": "Exit Termux і поверніться сюди",
+  "notifDialogTitle": "Сповіщення вимкнені",
+  "notifDialogDesc": "MemPlato не зможе повідомити вас коли Termux завершить встановлення. Увімкніть сповіщення в Android налаштуваннях.",
+  "btnLater": "Пізніше",
+  "btnEnableNotif": "Увімкнути",
+  "permDialogTitle": "Дозвіл Termux",
+  "permDialogDesc": "Для роботи MemPlato потрібен дозвіл:\n1. Відкрийте налаштування\n2. Run commands in Termux environment\n3. Увімкніть",
+  "btnCancel": "Скасувати",
+  "btnOpenSettings": "Відкрити налаштування",
+  "downloadTermuxTitle": "Завантажити Termux",
+  "downloadWhyTitle": "Навіщо потрібен Termux?",
+  "downloadWhyDesc": "Termux — це термінал для Android. MemPlato використовує його для запуску сервера прямо на телефоні.",
+  "downloadFileName": "termux-app.v.universal.apk",
+  "downloadSourceLabel": "Джерело",
+  "downloadWarningTitle": "Увага",
+  "downloadWarningDesc": "Termux більше не оновлюється в Google Play. Завантажуйте тільки з GitHub — це офіційне джерело від розробників Termux.",
+  "downloadSecurityTitle": "Безпека",
+  "downloadSecurityDesc": "Termux — відкритий код на GitHub від Google. Перевіряється спільнотою. Жодних прихованих функцій. 1. Завантажте файл 2. Дозвольте встановлення з невідомих джерел 3. Встановіть Termux.",
+  "agreeLabel": "Я погоджуюся з ",
+  "termsLink": "умовами використання",
+  "btnClose": "Закрити",
+  "btnDownload": "Завантажити",
+  "termsTitle": "Умови використання",
+  "termsText": "Використовуючи MemPlato ви погоджуєтесь з умовами використання додатку.",
+  "agreeCheckbox": "Я приймаю умови використання",
+  "btnAccept": "Прийняти",
+  "logCopyingFile": "📦 Копіювання {name}...",
+  "@logCopyingFile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "logErrorGeneric": "❌ Помилка: {error}",
+  "@logErrorGeneric": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
+}
