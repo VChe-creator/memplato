@@ -197,7 +197,7 @@ The server is stable and handles all edge cases without crashing. There are know
 - **Cross-lingual search** — Ukrainian/English mixed queries sometimes return suboptimal ranking. For best results, use the same language as your stored content.
 - **Duplicate protection** — `add_drawer` does not automatically call `check_duplicate`. Best practice: call `check_duplicate` manually before saving.
 - **Search limit** — Semantic search is optimized for queries returning up to 10 results. Requesting more may cause an error in some configurations.
-- **Auto-start after reboot** — After rebooting your phone, the server does not restart automatically. Manual start/stop controls will be added in the next update.
+- **Auto-start after reboot** — Auto-start after reboot — After rebooting your phone, use the Start button in the app to restart the server manually. Auto-start on boot will be added in a future update.
 
 All known issues are cosmetic or edge-case. The core functionality — storing memories, knowledge graph, and MCP connectivity — works reliably.
 
