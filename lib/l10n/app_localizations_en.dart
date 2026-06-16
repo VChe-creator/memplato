@@ -60,6 +60,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btnCheckStatus => 'Check';
 
   @override
+  String get btnStopServer => 'Stop';
+
+  @override
+  String get btnStartServer => 'Start';
+
+  @override
   String get btnCopyUrl => 'Copy URL';
 
   @override

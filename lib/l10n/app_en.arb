@@ -17,6 +17,8 @@
   "btnLaunchTermux": "Open Termux",
   "btnInstallServer": "Install server",
   "btnCheckStatus": "Check",
+  "btnStopServer": "Stop",
+  "btnStartServer": "Start",
   "btnCopyUrl": "Copy URL",
   "statusOnline": "MemPlato Online",
   "statusOffline": "Unavailable",

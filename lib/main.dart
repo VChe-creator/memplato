@@ -864,6 +864,37 @@ class _MainScreenState extends State<MainScreen> {
     setState(() => _installLog += '\n$text');
   }
 
+
+
+  Future<void> _startServer() async {
+    if (!mounted) return;
+    setState(() {
+      _installing = true;
+      _installLog = 'Starting server...';
+    });
+    await TermuxBridge.runCommand(
+        'cd ~ && nohup python3.13 memplato_server.py >> server.log 2>&1 &'
+    );
+    await Future.delayed(const Duration(seconds: 3));
+    if (!mounted) return;
+    setState(() {
+      _installing = false;
+      _installLog = '';
+    });
+    await _checkServer();
+  }
+
+  Future<void> _stopServer() async {
+    await TermuxBridge.runCommand(
+        'pkill -f memplato_server.py 2>/dev/null; pkill -f autossh 2>/dev/null; pkill -f tunnel_watchdog.sh 2>/dev/null; true'
+    );
+    if (!mounted) return;
+    setState(() {
+      _serverOnline = false;
+      _statusText = AppLocalizations.of(context)!.statusOffline;
+    });
+  }
+
   void _copyUrl() {
     if (!mounted) return;
     final urlToCopy = _relayUrl.isNotEmpty ? _relayUrl : _serverUrl;
@@ -1294,7 +1325,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ],
 
-          ] else if (!_serverOnline) ...[
+          ] else if (!_serverOnline && _userId.isEmpty) ...[
 
             SizedBox(
               width: double.infinity,
@@ -1377,10 +1408,22 @@ class _MainScreenState extends State<MainScreen> {
               Expanded(
                 child: SizedBox(
                   height: 52,
-                  child: OutlinedButton.icon(
-                    onPressed: _serverUrl.isNotEmpty ? _checkServer : null,
-                    icon: const Icon(Icons.refresh),
-                    label: Text(l.btnCheckStatus),
+                  child: _serverOnline
+                      ? ElevatedButton.icon(
+                    onPressed: _stopServer,
+                    icon: const Icon(Icons.stop_circle_outlined),
+                    label: Text(l.btnStopServer),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFDD6974),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                  )
+                      : OutlinedButton.icon(
+                    onPressed: _serverUrl.isNotEmpty ? _startServer : null,
+                    icon: const Icon(Icons.play_arrow),
+                    label: Text(l.btnStartServer),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF4F98A3),
                       side: const BorderSide(color: Color(0xFF4F98A3)),

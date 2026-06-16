@@ -17,6 +17,8 @@
   "btnLaunchTermux": "Відкрити Termux",
   "btnInstallServer": "Встановити сервер",
   "btnCheckStatus": "Перевірити",
+    "btnStopServer": "Зупинити",
+    "btnStartServer": "Запустити",
   "btnCopyUrl": "Копіювати URL",
   "statusOnline": "MemPlato Online",
   "statusOffline": "Недоступний",

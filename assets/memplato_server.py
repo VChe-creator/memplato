@@ -130,7 +130,7 @@ def _load_vocab():
     global _vocab
     try:
         import json as _json
-        tj = pathlib.Path(TOKENIZER_FILE)
+        tj = Path(TOKENIZER_FILE)
         if not tj.exists():
             print("[WARN] tokenizer.json not found, using fallback tokenizer")
             return
@@ -418,7 +418,7 @@ def _do_status() -> dict:
     con.close()
     return {
         "status": "ok",
-        "server": "memplato Mobile v1.0.5",
+        "server": "memplato Mobile v1.0.6",
         "drawers": drawers,
         "wings": wings,
         "rooms": rooms,
@@ -1151,10 +1151,10 @@ async def call_mcp_tool(name: str, arguments: dict):
 async def lifespan(app: FastAPI):
     init_db()
     load_model()
-    print(f"[OK] memplato Mobile v1.0.5 running on port {PORT}")
+    print(f"[OK] memplato Mobile v1.0.6 running on port {PORT}")
     yield
 
-app = FastAPI(title="memplato Mobile", version="1.0.5", lifespan=lifespan)
+app = FastAPI(title="memplato Mobile", version="1.0.6", lifespan=lifespan)
 
 # ─── MCP SSE ENDPOINTS ───────────────────────────────────────────────────────
 # FIX v1.0.5: використовуємо request._send напряму, без safe_send обгортки.
@@ -1472,7 +1472,7 @@ async def mcp_streamable_http(request: Request):
         result = {
             "protocolVersion": "2024-11-05",
             "capabilities": {"tools": {}},
-            "serverInfo": {"name": "memplato-mobile", "version": "1.0.5"}
+            "serverInfo": {"name": "memplato-mobile", "version": "1.0.6"}
         }
 
     # --- tools/list ---

@@ -197,6 +197,18 @@ abstract class AppLocalizations {
   /// **'Check'**
   String get btnCheckStatus;
 
+  /// No description provided for @btnStopServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get btnStopServer;
+
+  /// No description provided for @btnStartServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get btnStartServer;
+
   /// No description provided for @btnCopyUrl.
   ///
   /// In en, this message translates to:

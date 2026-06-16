@@ -60,6 +60,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get btnCheckStatus => 'Перевірити';
 
   @override
+  String get btnStopServer => 'Зупинити';
+
+  @override
+  String get btnStartServer => 'Запустити';
+
+  @override
   String get btnCopyUrl => 'Копіювати URL';
 
   @override
