@@ -111,7 +111,7 @@ https://relay.memplato.com/u/YOUR_ID/mcp
 
 Termux must stay running in the background (you'll see it in your notification bar). The watchdog script automatically restarts the tunnel if it drops. You don't need to do anything — just keep Termux open.
 
-> ⚠️ **Known limitation:** After rebooting your phone, the server does not restart automatically. Manual start/stop controls will be added in the next update.
+> ⚠️ **Known limitation:** After rebooting your phone, the server does not restart automatically. Use the **Start** button in the app to restart it manually. Auto-start on boot will be added in a future update.
 
 ---
 
