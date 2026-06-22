@@ -81,7 +81,7 @@ MemPlato runs a Python FastAPI server inside [Termux](https://github.com/termux/
 
 ## Download
 
-👉 **[Download latest APK (v1.0.6)](https://github.com/VChe-creator/memplato/releases/latest)**
+👉 **[Download latest APK (v1.0.7)](https://github.com/VChe-creator/memplato/releases/latest)**
 
 The APK is ~280 MB because it includes Python, all libraries, and the AI model — so setup on your phone requires no internet connection.
 
