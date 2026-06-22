@@ -793,12 +793,20 @@ class _MainScreenState extends State<MainScreen> {
         // ── Тунель ──
         'am broadcast -a com.memplato.STATUS --es step "STEP:tunnel" 2>/dev/null || true',
         '[ -f ~/.ssh/memplato_key ] || ssh-keygen -t rsa -b 2048 -f ~/.ssh/memplato_key -N "" >> ~/install_log.txt 2>&1',
-        'PUBKEY=\$(cat ~/.ssh/memplato_key.pub)',
-        'RESPONSE=\$(curl -s -X POST https://relay.memplato.com/register -H "Content-Type: application/json" --data-raw "{\\"public_key\\":\\"\$PUBKEY\\"}")',
-        'USER_ID=\$(echo "\$RESPONSE" | python3.13 -c "import sys,json; d=json.load(sys.stdin); print(d.get(\\"user_id\\",\\"\\"))" 2>/dev/null || echo "")',
-        'TUNNEL_PORT=\$(echo "\$RESPONSE" | python3.13 -c "import sys,json; d=json.load(sys.stdin); print(d.get(\\"tunnel_port\\",7333))" 2>/dev/null || echo "7333")',
-        'echo "\$USER_ID" > ~/.memplato_user_id',
-        'echo "\$TUNNEL_PORT" > ~/.memplato_port',
+        r'EXISTING_ID=$(cat ~/.memplato_user_id 2>/dev/null || echo "")',
+        r'EXISTING_PORT=$(cat ~/.memplato_port 2>/dev/null || echo "")',
+        r'if [ -n "$EXISTING_ID" ] && [ -n "$EXISTING_PORT" ]; then',
+        r'  USER_ID=$EXISTING_ID',
+        r'  TUNNEL_PORT=$EXISTING_PORT',
+        r'  echo "[register] reusing id=$USER_ID port=$TUNNEL_PORT" >> ~/install_log.txt',
+        r'else',
+        r'  PUBKEY=$(cat ~/.ssh/memplato_key.pub)',
+        r'  RESPONSE=$(curl -s -X POST https://relay.memplato.com/register -H "Content-Type: application/json" --data-raw "{\"public_key\":\"$PUBKEY\"}")',
+        r'  USER_ID=$(echo "$RESPONSE" | python3.13 -c "import sys,json; d=json.load(sys.stdin); print(d.get(\"user_id\",\"\"))" 2>/dev/null || echo "")',
+        r'  TUNNEL_PORT=$(echo "$RESPONSE" | python3.13 -c "import sys,json; d=json.load(sys.stdin); print(d.get(\"tunnel_port\",7333))" 2>/dev/null || echo "7333")',
+        r'  echo "$USER_ID" > ~/.memplato_user_id',
+        r'  echo "$TUNNEL_PORT" > ~/.memplato_port',
+        r'fi',
         'am broadcast -a com.memplato.STATUS --es step "TUNNEL:registering" 2>/dev/null || true',
 
 // ── Зупиняємо старі процеси ──
@@ -807,18 +815,15 @@ class _MainScreenState extends State<MainScreen> {
         'sleep 1',
 
 // ── Запускаємо autossh перший раз ──
-        'autossh -M 0 -f -N -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -i ~/.ssh/memplato_key -R \$TUNNEL_PORT:localhost:7333 root@relay.memplato.com >> ~/autossh.log 2>&1',
+        r'autossh -M 0 -f -N -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -i ~/.ssh/memplato_key -R $TUNNEL_PORT:localhost:7333 root@relay.memplato.com >> ~/autossh.log 2>&1',
 
 // ── Пишемо watchdog скрипт ──
         'rm -f ~/tunnel_watchdog.sh',
         r'echo "#!/data/data/com.termux/files/usr/bin/bash" > ~/tunnel_watchdog.sh',
         r'echo "while true; do" >> ~/tunnel_watchdog.sh',
-        r'echo "  PORT=\$(cat ~/.memplato_port 2>/dev/null || echo 7333)" >> ~/tunnel_watchdog.sh',
-        r'echo "  USER_ID=\$(cat ~/.memplato_user_id 2>/dev/null || echo unknown)" >> ~/tunnel_watchdog.sh',
-        r'echo "  ALIVE=\$(curl -s --max-time 5 https://relay.memplato.com/u/\$USER_ID/health | grep -o \"\\\"server\\\":true\")" >> ~/tunnel_watchdog.sh',
-        r'echo "  if [ -z \"\$ALIVE\" ]; then" >> ~/tunnel_watchdog.sh',
-        r'echo "    echo \"[watchdog \$(date)] tunnel dead, restarting...\" >> ~/autossh.log" >> ~/tunnel_watchdog.sh',
-        r'echo "    pkill -f autossh 2>/dev/null; sleep 2" >> ~/tunnel_watchdog.sh',
+        r'echo "  if ! pgrep -f autossh > /dev/null; then" >> ~/tunnel_watchdog.sh',
+        r'echo "    PORT=\$(cat ~/.memplato_port 2>/dev/null || echo 7333)" >> ~/tunnel_watchdog.sh',
+        r'echo "    echo \"[watchdog \$(date)] autossh dead, restarting...\" >> ~/autossh.log" >> ~/tunnel_watchdog.sh',
         r'echo "    autossh -M 0 -f -N -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -i ~/.ssh/memplato_key -R \$PORT:localhost:7333 root@relay.memplato.com >> ~/autossh.log 2>&1" >> ~/tunnel_watchdog.sh',
         r'echo "  fi" >> ~/tunnel_watchdog.sh',
         r'echo "  sleep 30" >> ~/tunnel_watchdog.sh',
@@ -868,20 +873,63 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<void> _startServer() async {
     if (!mounted) return;
+
     setState(() {
       _installing = true;
-      _installLog = 'Starting server...';
+      _installLog = 'Starting server and tunnel...';
     });
-    await TermuxBridge.runCommand(
-        'cd ~ && nohup python3.13 memplato_server.py >> server.log 2>&1 &'
-    );
-    await Future.delayed(const Duration(seconds: 3));
-    if (!mounted) return;
-    setState(() {
-      _installing = false;
-      _installLog = '';
-    });
-    await _checkServer();
+
+    try {
+      await TermuxBridge.runCommand(
+        'pkill -f autossh 2>/dev/null || true; '
+            'pkill -f tunnel_watchdog.sh 2>/dev/null || true; '
+            'true',
+      );
+
+      await Future.delayed(const Duration(seconds: 1));
+
+      await TermuxBridge.runCommand(
+        'pgrep -f memplato_server.py >/dev/null || '
+            'nohup python3.13 ~/memplato_server.py >> ~/server.log 2>&1 &',
+      );
+
+      await Future.delayed(const Duration(seconds: 3));
+
+      await TermuxBridge.runCommand(
+        r'PORT=$(cat ~/.memplato_port 2>/dev/null || echo 7333); '
+        r'autossh -M 0 -f -N '
+        r'-o StrictHostKeyChecking=no '
+        r'-o ServerAliveInterval=30 '
+        r'-o ServerAliveCountMax=3 '
+        r'-i ~/.ssh/memplato_key '
+        r'-R $PORT:localhost:7333 '
+        r'root@relay.memplato.com >> ~/autossh.log 2>&1',
+      );
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      await TermuxBridge.runCommand(
+        'if [ -f ~/tunnel_watchdog.sh ]; then '
+            'nohup bash ~/tunnel_watchdog.sh >> ~/autossh.log 2>&1 & '
+            'fi',
+      );
+
+      await Future.delayed(const Duration(seconds: 4));
+      await _checkServer();
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _installLog = 'Start error: $e';
+      });
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        _installing = false;
+        if (_installLog == 'Starting server and tunnel...') {
+          _installLog = '';
+        }
+      });
+    }
   }
 
   Future<void> _stopServer() async {
