@@ -771,11 +771,11 @@ class _MainScreenState extends State<MainScreen> {
         'python3.13 -m pip install --quiet --no-index --find-links=~/wheels fastapi uvicorn mcp >> ~/install_log.txt 2>&1',
 
         // ── patchelf для нативних бібліотек ──
-        'SITE=/data/data/com.termux/files/usr/lib/python3.13/site-packages',
-        'patchelf --add-needed libpython3.13.so \$SITE/pydantic_core/_pydantic_core.cpython-313-aarch64-linux-android.so 2>/dev/null || true',
-        'patchelf --add-needed libpython3.13.so \$SITE/rpds/rpds.cpython-313-aarch64-linux-android.so 2>/dev/null || true',
-        'patchelf --add-needed libpython3.13.so \$SITE/watchfiles/_rust_notify.cpython-313-aarch64-linux-android.so 2>/dev/null || true',
-        'patchelf --add-needed libpython3.13.so \$SITE/cryptography/hazmat/bindings/_rust.cpython-313-aarch64-linux-android.so 2>/dev/null || true',
+        r'SITE=/data/data/com.termux/files/usr/lib/python3.13/site-packages',
+        r'patchelf --add-needed libpython3.13.so $SITE/pydantic_core/_pydantic_core.cpython-313-aarch64-linux-android.so 2>/dev/null || true',
+        r'patchelf --add-needed libpython3.13.so $SITE/rpds/rpds.cpython-313-aarch64-linux-android.so 2>/dev/null || true',
+        r'patchelf --add-needed libpython3.13.so $SITE/watchfiles/_rust_notify.cpython-313-aarch64-linux-android.so 2>/dev/null || true',
+        r'patchelf --add-needed libpython3.13.so $SITE/cryptography/hazmat/bindings/_rust.cpython-313-aarch64-linux-android.so 2>/dev/null || true',
 
         'am broadcast -a com.memplato.STATUS --es step "PIP:OK" 2>/dev/null || true',
         'am broadcast -a com.memplato.STATUS --es step "MCP:OK" 2>/dev/null || true',
@@ -821,10 +821,22 @@ class _MainScreenState extends State<MainScreen> {
         'rm -f ~/tunnel_watchdog.sh',
         r'echo "#!/data/data/com.termux/files/usr/bin/bash" > ~/tunnel_watchdog.sh',
         r'echo "while true; do" >> ~/tunnel_watchdog.sh',
-        r'echo "  if ! pgrep -f autossh > /dev/null; then" >> ~/tunnel_watchdog.sh',
-        r'echo "    PORT=\$(cat ~/.memplato_port 2>/dev/null || echo 7333)" >> ~/tunnel_watchdog.sh',
-        r'echo "    echo \"[watchdog \$(date)] autossh dead, restarting...\" >> ~/autossh.log" >> ~/tunnel_watchdog.sh',
+        r'echo "  if ! pgrep -f memplato_server.py > /dev/null; then" >> ~/tunnel_watchdog.sh',
+        r'echo "    echo \"[watchdog \$(date)] server dead, restarting...\" >> ~/autossh.log" >> ~/tunnel_watchdog.sh',
+        r'echo "    nohup python3.13 ~/memplato_server.py >> ~/server.log 2>&1 &" >> ~/tunnel_watchdog.sh',
+        r'echo "    sleep 10" >> ~/tunnel_watchdog.sh',
+        r'echo "  fi" >> ~/tunnel_watchdog.sh',
+        r'echo "  PORT=\$(cat ~/.memplato_port 2>/dev/null || echo 7333)" >> ~/tunnel_watchdog.sh',
+        r'echo "  USER_ID=\$(cat ~/.memplato_user_id 2>/dev/null || echo unknown)" >> ~/tunnel_watchdog.sh',
+        r'echo "  RELAY_OK=\$(curl -s --max-time 5 https://relay.memplato.com/u/\$USER_ID/health | grep -o \x27\"server\":true\x27)" >> ~/tunnel_watchdog.sh',
+        r'echo "  if [ -z \"\$RELAY_OK\" ] || ! pgrep -f autossh > /dev/null; then" >> ~/tunnel_watchdog.sh',
+        r'echo "    echo \"[watchdog \$(date)] tunnel dead, restarting...\" >> ~/autossh.log" >> ~/tunnel_watchdog.sh',
+        r'echo "    pkill -f autossh 2>/dev/null" >> ~/tunnel_watchdog.sh',
+        r'echo "    sleep 1" >> ~/tunnel_watchdog.sh',
+        r'echo "    ssh -i ~/.ssh/memplato_key root@relay.memplato.com \"fuser -k \$PORT/tcp 2>/dev/null || true\" 2>/dev/null || true" >> ~/tunnel_watchdog.sh',
+        r'echo "    sleep 2" >> ~/tunnel_watchdog.sh',
         r'echo "    autossh -M 0 -f -N -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -i ~/.ssh/memplato_key -R \$PORT:localhost:7333 root@relay.memplato.com >> ~/autossh.log 2>&1" >> ~/tunnel_watchdog.sh',
+        r'echo "    sleep 20" >> ~/tunnel_watchdog.sh',
         r'echo "  fi" >> ~/tunnel_watchdog.sh',
         r'echo "  sleep 30" >> ~/tunnel_watchdog.sh',
         r'echo "done" >> ~/tunnel_watchdog.sh',
@@ -834,7 +846,7 @@ class _MainScreenState extends State<MainScreen> {
         'nohup bash ~/tunnel_watchdog.sh >> ~/autossh.log 2>&1 &',
 
         'sleep 2',
-        'am broadcast -a com.memplato.STATUS --es step "TUNNEL:started" --es uid "\$USER_ID" 2>/dev/null || true',
+        r'am broadcast -a com.memplato.STATUS --es step "TUNNEL:started" --es uid "$USER_ID" 2>/dev/null || true',
         'am broadcast -a com.memplato.STATUS --es step "DONE" 2>/dev/null || true',
       ];
 
@@ -873,61 +885,44 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<void> _startServer() async {
     if (!mounted) return;
-
     setState(() {
       _installing = true;
       _installLog = 'Starting server and tunnel...';
     });
-
     try {
-      await TermuxBridge.runCommand(
-        'pkill -f autossh 2>/dev/null || true; '
-            'pkill -f tunnel_watchdog.sh 2>/dev/null || true; '
-            'true',
-      );
+      final lines = [
+        'pkill -f autossh 2>/dev/null || true',
+        'pkill -f tunnel_watchdog.sh 2>/dev/null || true',
+        'sleep 1',
+        r'pgrep -f memplato_server.py >/dev/null || nohup python3.13 ~/memplato_server.py >> ~/server.log 2>&1 &',
+        'sleep 3',
+        r'PORT=$(cat ~/.memplato_port 2>/dev/null || echo 7333)',
+        r'autossh -M 0 -f -N -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -i ~/.ssh/memplato_key -R $PORT:localhost:7333 root@relay.memplato.com >> ~/autossh.log 2>&1',
+        r'if [ -f ~/tunnel_watchdog.sh ]; then nohup bash ~/tunnel_watchdog.sh >> ~/autossh.log 2>&1 & fi',
+      ];
 
-      await Future.delayed(const Duration(seconds: 1));
+      await TermuxBridge.runCommand('rm -f ~/start_server.sh');
+      await Future.delayed(const Duration(milliseconds: 200));
 
-      await TermuxBridge.runCommand(
-        'pgrep -f memplato_server.py >/dev/null || '
-            'nohup python3.13 ~/memplato_server.py >> ~/server.log 2>&1 &',
-      );
+      for (final line in lines) {
+        final escaped = line.replaceAll("'", "'\\''");
+        await TermuxBridge.runCommand("echo '$escaped' >> ~/start_server.sh");
+        await Future.delayed(const Duration(milliseconds: 150));
+      }
 
-      await Future.delayed(const Duration(seconds: 3));
-
-      await TermuxBridge.runCommand(
-        r'PORT=$(cat ~/.memplato_port 2>/dev/null || echo 7333); '
-        r'autossh -M 0 -f -N '
-        r'-o StrictHostKeyChecking=no '
-        r'-o ServerAliveInterval=30 '
-        r'-o ServerAliveCountMax=3 '
-        r'-i ~/.ssh/memplato_key '
-        r'-R $PORT:localhost:7333 '
-        r'root@relay.memplato.com >> ~/autossh.log 2>&1',
-      );
-
-      await Future.delayed(const Duration(seconds: 2));
-
-      await TermuxBridge.runCommand(
-        'if [ -f ~/tunnel_watchdog.sh ]; then '
-            'nohup bash ~/tunnel_watchdog.sh >> ~/autossh.log 2>&1 & '
-            'fi',
-      );
-
-      await Future.delayed(const Duration(seconds: 4));
+      await TermuxBridge.runCommand('chmod +x ~/start_server.sh');
+      await Future.delayed(const Duration(milliseconds: 300));
+      await TermuxBridge.runCommand('nohup bash ~/start_server.sh >> ~/server.log 2>&1 &');
+      await Future.delayed(const Duration(seconds: 8));
       await _checkServer();
     } catch (e) {
       if (!mounted) return;
-      setState(() {
-        _installLog = 'Start error: $e';
-      });
+      setState(() { _installLog = 'Start error: $e'; });
     } finally {
       if (!mounted) return;
       setState(() {
         _installing = false;
-        if (_installLog == 'Starting server and tunnel...') {
-          _installLog = '';
-        }
+        if (_installLog == 'Starting server and tunnel...') _installLog = '';
       });
     }
   }
@@ -1245,7 +1240,7 @@ class _MainScreenState extends State<MainScreen> {
                   color: (_serverOnline
                       ? const Color(0xFF6DAA45)
                       : const Color(0xFFDD6974))
-                      .withOpacity(0.5),
+                      .withValues(alpha: 0.5),
                   blurRadius: 12,
                   spreadRadius: 4,
                 ),
