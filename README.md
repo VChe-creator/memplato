@@ -8,6 +8,7 @@ Every AI conversation starts from zero. MemPlato fixes that — it's a persisten
 [![Platform: Android](https://img.shields.io/badge/Platform-Android%2012%2B-green.svg)](https://github.com/VChe-creator/memplato/releases)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-cyan.svg)](https://modelcontextprotocol.io)
 [![Version](https://img.shields.io/badge/Version-1.0.5%20MVP-orange.svg)](https://github.com/VChe-creator/memplato/releases)
+[![smithery badge](https://smithery.ai/badge/cherkavskyi/memplato)](https://smithery.ai/servers/cherkavskyi/memplato)
 
 ---
 
